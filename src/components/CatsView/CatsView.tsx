@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Tag } from "@/types";
 
 import { Tags } from "../Tags/Tags";
+import { CatGrid } from "../CatGrid/CatGrid";
 
 interface Props {
   tags: Tag[];
@@ -20,6 +21,8 @@ export function CatsView({ tags }: Props) {
           setSelectedTags((prev) => prev.filter((t) => t !== tag))
         }
       />
+
+      <CatGrid selectedTags={selectedTags} />
     </div>
   );
 }
