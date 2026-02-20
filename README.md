@@ -1,36 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Setup
 
-## Getting Started
+Clone the repo into any directory
 
-First, run the development server:
+## Installation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Run pnpm install
+- Copy the .env.example and rename it to .env.local and paste https://cataas.com/api as base url
+- Run pnpm run dev to start the application
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Explanation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app is pretty straight forward. I went with NextJJs because that is being used within Setso.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+I have created one server component, thats the page.tsx in the root directory. In here we fetch all the possible tags. The reason for this is that the tags response is fairly small, doesn't cost any time and we can give it as props to the children. It saves an extra loading state.
 
-## Learn More
+CatsView exists out of two main components, the tags and the actual grid. In here we keep a global state to keep track of the selected tags.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For tags I've created a search input because there's more then 1000 available tags, you can simply click on them to add them and click on the pill to remove it. Clicking on the tags updates the state in CatsView which causes a refetch of the cats in CatGrid
