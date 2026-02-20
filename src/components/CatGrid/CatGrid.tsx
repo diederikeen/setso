@@ -17,10 +17,14 @@ type Cat = {
   createdAt: "string";
 };
 
+const LIMIT = 10;
+const PAGE = 0;
+
 export function CatGrid({ selectedTags }: Props) {
   const [cats, setCats] = useState<Cat[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(PAGE);
 
   const formattedTags = useMemo(() => selectedTags.join(","), [selectedTags]);
 
@@ -28,7 +32,9 @@ export function CatGrid({ selectedTags }: Props) {
     setIsLoading(true);
 
     async function fetchCats() {
-      const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/cats`);
+      const url = new URL(
+        `${process.env.NEXT_PUBLIC_API_URL}/cats?skip=${page * LIMIT}&limit=${LIMIT}`,
+      );
 
       try {
         url.searchParams.set("tags", formattedTags);
@@ -38,7 +44,7 @@ export function CatGrid({ selectedTags }: Props) {
           throw new Error("Failed to fetch cats");
         }
         const data = await res.json();
-        setCats(data);
+        setCats((prev) => [...(prev || []), ...data]);
       } catch {
         setError("Whoops, something went wrong");
       } finally {
@@ -46,28 +52,40 @@ export function CatGrid({ selectedTags }: Props) {
       }
     }
     fetchCats();
-  }, [formattedTags]);
+  }, [formattedTags, page]);
 
-  if (isLoading) {
-    return <div>Finding your cats...</div>;
-  }
+  useEffect(() => {
+    setCats(null);
+    setPage(0);
+  }, [formattedTags]);
 
   if (error) {
     return <div>{error}</div>;
   }
 
   return (
-    <div className={styles.grid}>
-      {cats?.map((cat) => (
-        <div className={styles.imageWrapper} key={cat.id}>
-          <Image
-            src={`https://cataas.com/cat/${cat.id}`}
-            alt="cat"
-            fill
-            style={{ objectFit: "cover" }}
-          />
-        </div>
-      ))}
+    <div>
+      <div className={styles.grid}>
+        {cats?.map((cat) => (
+          <div className={styles.imageWrapper} key={cat.id}>
+            <Image
+              src={`https://cataas.com/cat/${cat.id}`}
+              alt="cat"
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+        ))}
+      </div>
+      {isLoading && <div>Finding your cats...</div>}
+      <div className={styles.footer}>
+        <button
+          className={styles.button}
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Load more
+        </button>
+      </div>
     </div>
   );
 }

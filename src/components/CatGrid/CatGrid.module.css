@@ -24,3 +24,19 @@
   width: 100%;
   aspect-ratio: 1 / 1;
 }
+
+.footer {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  padding: 16px 32px;
+  background-color: mediumturquoise;
+  color: white;
+  border: none;
+
+  &:hover {
+    background-color: darkturquoise;
+  }
+}
