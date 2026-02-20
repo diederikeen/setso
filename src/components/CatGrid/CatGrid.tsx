@@ -67,6 +67,7 @@ export function CatGrid({ selectedTags }: Props) {
     setPage(0);
     setHasMore(true);
     setResetKey((prev) => prev + 1);
+    setError("");
   }, [formattedTags]);
 
   if (error) {
