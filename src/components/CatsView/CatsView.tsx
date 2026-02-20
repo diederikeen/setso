@@ -12,7 +12,7 @@ interface Props {
 export function CatsView({ tags }: Props) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   return (
-    <div>
+    <>
       <Tags
         tags={tags}
         selectedTags={selectedTags}
@@ -23,6 +23,6 @@ export function CatsView({ tags }: Props) {
       />
 
       <CatGrid selectedTags={selectedTags} />
-    </div>
+    </>
   );
 }
