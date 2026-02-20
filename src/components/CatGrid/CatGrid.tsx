@@ -27,6 +27,7 @@ export function CatGrid({ selectedTags }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(PAGE);
   const [resetKey, setResetKey] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const formattedTags = useMemo(() => selectedTags.join(","), [selectedTags]);
 
@@ -47,6 +48,7 @@ export function CatGrid({ selectedTags }: Props) {
         }
         const data = await res.json();
         setCats((prev) => [...(prev || []), ...data]);
+        setHasMore(data.length >= LIMIT);
       } catch {
         setError("Whoops, something went wrong");
       } finally {
@@ -63,6 +65,7 @@ export function CatGrid({ selectedTags }: Props) {
     }
     setCats(null);
     setPage(0);
+    setHasMore(true);
     setResetKey((prev) => prev + 1);
   }, [formattedTags]);
 
@@ -70,7 +73,7 @@ export function CatGrid({ selectedTags }: Props) {
     return <div>{error}</div>;
   }
 
-  const isLoadMoreDisabled = (cats?.length || 0) < LIMIT;
+  const isLoadMoreDisabled = !hasMore;
 
   return (
     <div>
