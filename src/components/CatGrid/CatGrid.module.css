@@ -39,4 +39,8 @@
   &:hover {
     background-color: darkturquoise;
   }
+
+  &[disabled] {
+    background-color: grey;
+  }
 }

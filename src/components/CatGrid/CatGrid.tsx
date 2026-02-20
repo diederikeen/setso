@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
 import { Tag } from "@/types";
@@ -21,10 +21,12 @@ const LIMIT = 10;
 const PAGE = 0;
 
 export function CatGrid({ selectedTags }: Props) {
+  const isMounted = useRef(false);
   const [cats, setCats] = useState<Cat[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(PAGE);
+  const [resetKey, setResetKey] = useState(0);
 
   const formattedTags = useMemo(() => selectedTags.join(","), [selectedTags]);
 
@@ -32,12 +34,12 @@ export function CatGrid({ selectedTags }: Props) {
     setIsLoading(true);
 
     async function fetchCats() {
-      const url = new URL(
-        `${process.env.NEXT_PUBLIC_API_URL}/cats?skip=${page * LIMIT}&limit=${LIMIT}`,
-      );
+      const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/cats`);
+      url.searchParams.set("skip", String(page * LIMIT));
+      url.searchParams.set("limit", String(LIMIT));
+      url.searchParams.set("tags", formattedTags);
 
       try {
-        url.searchParams.set("tags", formattedTags);
         const res = await fetch(url);
 
         if (!res.ok) {
@@ -52,16 +54,23 @@ export function CatGrid({ selectedTags }: Props) {
       }
     }
     fetchCats();
-  }, [formattedTags, page]);
+  }, [page, resetKey]);
 
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
     setCats(null);
     setPage(0);
+    setResetKey((prev) => prev + 1);
   }, [formattedTags]);
 
   if (error) {
     return <div>{error}</div>;
   }
+
+  const isLoadMoreDisabled = (cats?.length || 0) < LIMIT;
 
   return (
     <div>
@@ -82,6 +91,7 @@ export function CatGrid({ selectedTags }: Props) {
         <button
           className={styles.button}
           onClick={() => setPage((prev) => prev + 1)}
+          disabled={isLoadMoreDisabled}
         >
           Load more
         </button>
