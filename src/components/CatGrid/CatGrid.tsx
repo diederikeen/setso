@@ -13,8 +13,8 @@ interface Props {
 type Cat = {
   id: string;
   tags: Tag[];
-  mimetyoe: "string";
-  createdAt: "string";
+  mimetype: string;
+  createdAt: string;
 };
 
 const LIMIT = 10;
